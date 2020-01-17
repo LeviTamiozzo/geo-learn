@@ -2,24 +2,47 @@
   <div>
     <v-content>
       <v-container>
-        <v-select :items="regions" label="Region" v-model="region" @change="getCountries()"></v-select>
-        <div>Capital of <span><b>{{ randomCountry.name }}</b></span>?</div>
-        <v-simple-table height="300" disabled>
-          <thead>
-            <tr>
-              <th>Countries</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="country in shuffledCountries" :key="country.numericCode" @click.prevent="selectCountry(country.numericCode)" :class="answerClass(country.numericCode)">
-              <td :disabled="answered">
-                {{ country.capital }}
-              </td>
-            </tr>
-          </tbody>
-        </v-simple-table>
+        <v-col cols="lg-4 sm-12">
+          <v-select :items="regions" label="Region" v-model="region" @change="getCountries()"></v-select>
+        </v-col>
+        <div v-if="randomCountry.numericCode">
+          Capital of
+          <span>
+            <b>{{ randomCountry.name }}</b>
+          </span>?
+        </div>
+
+        <v-item-group>
+          <v-container>
+            <v-row>
+              <v-col
+                v-for="country in shuffledCountries"
+                :key="country.numericCode"
+                cols="12"
+                md="3"
+              >
+                <v-item v-slot:default="{ active, toggle }">
+                  <v-card 
+                    class="d-flex align-center justify-center"                   
+                    height="75"     
+                    dark               
+                    @click="selectCountry(country.numericCode); toggle();"
+                  >
+                  <p class="text-center p-15px">{{ country.name }}</p>
+                  </v-card>
+                </v-item>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-item-group>
+
         <div>
-          <v-btn color="primary" class="mr-5" @click="submitAnswer" :disabled="answered || selectedCountry == null">Submit</v-btn>
+          <v-btn
+            color="primary"
+            class="mr-5"
+            @click="submitAnswer"
+            :disabled="answered || selectedCountry == null"
+          >Submit</v-btn>
           <v-btn color="indigo" @click="getCountries()" :disabled="!answered">Next</v-btn>
         </div>
       </v-container>
@@ -35,7 +58,7 @@ export default {
   name: "questionBox",
   data() {
     return {
-      numberOfCountries: 4,
+      numberOfCountries: 6,
       region: "",
       shuffledCountries: [],
       randomCountry: {},
@@ -56,10 +79,7 @@ export default {
     getCountries() {
       this.selectedCountry = null;
       this.answered = false;
-      this.shuffledCountries = _.shuffle(this.countries(this.region)).splice(
-        0,
-        this.numberOfCountries
-      );
+      this.shuffledCountries = _.shuffle(this.countries(this.region)).splice(0, this.numberOfCountries);
       let rand = Math.floor(Math.random() * this.numberOfCountries);
       this.randomCountry = this.shuffledCountries[rand];
     },
@@ -70,18 +90,18 @@ export default {
       let answerClass = "";
 
       if (this.selectedCountry === numericCode && !this.answered) {
-        answerClass = "selectedCountry";
+        answerClass = "selected-country no-pointer-events";
       } else if (
         this.answered &&
         numericCode === this.randomCountry.numericCode
       ) {
-        answerClass = "correctAnswer";
+        answerClass = "correct-answer no-pointer-events";
       } else if (
         this.answered &&
         numericCode !== this.randomCountry.numericCode &&
         numericCode === this.selectedCountry
       ) {
-        answerClass = "wrongAnswer";
+        answerClass = "wrong-answer no-pointer-events";
       }
 
       return answerClass;
@@ -99,13 +119,19 @@ tbody tr {
   cursor: pointer;
 }
 
-.selectedCountry {
+.selected-country {
   background-color: lightblue;
 }
-.correctAnswer {
+
+.correct-answer {
   background-color: lightgreen;
 }
-.wrongAnswer {
+
+.wrong-answer {
   background-color: lightpink;
+}
+
+.answer {
+  
 }
 </style>

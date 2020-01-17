@@ -2,8 +2,8 @@
   <div>
     <v-content>
       <v-container fluid>
-        <v-row>
-          <v-col cols="6">
+        <v-row class="justify-center">
+          <v-col cols="lg-8 sm-10">
             <question-box />
           </v-col>
         </v-row>

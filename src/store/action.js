@@ -7,6 +7,6 @@ export default {
             .then(response => {
                 let countries = response.data
                 commit("SET_COUNTRIES", countries)
-            })
+            });
     }
 }
